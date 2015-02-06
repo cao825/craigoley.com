@@ -9,6 +9,24 @@
     padding-right: 15px;
 }
 
+.me-background::after {
+    content: "";
+    background: url('/Content/Images/me_small.png') no-repeat center top;
+    opacity: 0.3;
+    filter: alpha(opacity=30);
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: 1;
+}
+
+.no-opacity {
+    opacity: 1.0;
+    filter: alpha(opacity=100);
+}
+
 /* Override the default bootstrap behavior where horizontal description lists 
    will truncate terms that are too long to fit in the left column 
 */
