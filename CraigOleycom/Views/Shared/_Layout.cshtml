@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CraigOley.com - @ViewBag.Title</title>
     @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/css/font-awesome.css")
     @Scripts.Render("~/bundles/modernizr")
 
     <script type="text/javascript">
@@ -35,8 +36,8 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    <li>@Html.ActionLink("Photos", "Index", "Photos")</li>
+                    <li>@Html.ActionLink("Projects", "Projects", "Home")</li>
                     @{ if (ViewBag.showLogin)
                      {
                         <li>@Html.Partial("_LoginPartial")</li>
