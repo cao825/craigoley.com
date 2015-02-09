@@ -36,6 +36,8 @@
     </script>
 </head>
 <body>
+    <div id="bgImg" class="bgImg"></div>
+    <div id="oldBg" class="bgImg"></div>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -69,6 +71,7 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/scripts")
     @RenderSection("scripts", required: false)
 </body>
 </html>
