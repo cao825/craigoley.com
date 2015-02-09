@@ -1,6 +1,7 @@
 ﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
+    font-family: 'Arvo', serif;
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -69,4 +70,15 @@ textarea {
   font-size: 24px;
   line-height: 1.33;
   border-radius: 35px;
+}
+
+.left {
+    float:left;
+}
+
+.my-fa-lg {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    vertical-align: -15%;
+    display: inline-block;
 }
