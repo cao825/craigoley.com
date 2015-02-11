@@ -4,6 +4,10 @@
     $('[data-toggle="tooltip"]').tooltip();
 });
 
+///// Generics /////
+
+
+///// BG Image Functions /////
 var bgImgSlideshow = function () {
     bgImgChange();
 
