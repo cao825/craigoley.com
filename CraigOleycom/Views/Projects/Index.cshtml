@@ -1,0 +1,27 @@
+﻿@model IEnumerable<CraigOleycom.Models.Project>
+
+@{
+    ViewBag.Title = "Projects";
+}
+<h2>@ViewBag.Title</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@foreach (var item in Model)
+{
+    <div class="row">
+        <a style="display:block" href="/Projects/Details/@item.ID">
+            <div class="col-md-5 shade-box hover-box">
+                <h3>@Html.DisplayFor(modelItem => item.name)</h3>
+                <br/>
+                <img src="@Html.DisplayFor(modelItem => item.img_url)" width="350" />
+                <br/><br/>
+                <p>
+                    @Html.DisplayFor(modelItem => item.short_description)
+                </p>
+            </div>
+        </a>
+    </div>
+}

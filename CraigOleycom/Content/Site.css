@@ -111,3 +111,15 @@ textarea {
     margin-right: auto;
     display: block;
 }
+
+.shade-box {
+    background-color: #151515;
+    border-radius: 6px;
+    opacity: 0.7;
+    margin-bottom: 15px;
+}
+
+.hover-box:hover {
+    opacity: 0.9;
+    cursor: pointer;
+}
