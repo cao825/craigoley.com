@@ -18,9 +18,9 @@ namespace CraigOleycom.Controllers
             return View();
         }
 
-        public ActionResult Fractal
+        public ActionResult Fractal()
         {
-
+            return View();
         }
     }
 }

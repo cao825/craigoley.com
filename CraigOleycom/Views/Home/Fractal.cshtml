@@ -4,4 +4,113 @@
 
 <h2>@ViewBag.Title</h2>
 
-<p>Coming Soon</p>
+<div>
+    <label>
+        Min X (Left):
+    </label><input type="text" name="min_x" value="-2.0" size="5" id="min_x" onchange="calcZoom()" />
+    <label>
+        Max X (Right):
+    </label><input type="text" name="max_x" value="1.0" size="5" id="max_x" onchange="calcZoom()" />
+    <label>
+        Min Y (Top):
+    </label><input type="text" name="min_y" value="-1.0" size="5" id="min_y" onchange="calcZoom()" />
+    <label>
+        Max Y (Bottom):
+    </label><input type="text" name="max_y" value="1.0" size="5" id="max_y" onchange="calcZoom()" />
+    <label>
+        Zoom:
+    </label><input type="text" name="zoom" value="300" size="10" id="zoom" readonly />
+    <a href="javascript:void(0)" onclick="refreshImg()" class="btn btn-default" id="button_fractal">Render</a>
+</div>
+<div class="clear"></div>
+<div>
+    Examples: X(0.430, 0.445), Y(0.312, 0.325) | X(0.32, 0.331), Y(0.032, 0.045)
+</div>
+<div class="clear"></div>
+<div>
+    <span style="font-size: 1.5em;">Quadrant Zoom:</span>
+    <a href="javascript:void(0)" onclick='topLeft()' class="btn btn-default" id='button_topleft'
+       data-toggle="tooltip" data-placement="top" title="Zoom into top left quadrant of fractal">
+        Top Left
+    </a>
+    <a href="javascript:void(0)" onclick='topRight()' class="btn btn-default" id='button_topright'
+       data-toggle="tooltip" data-placement="top" title="Zoom into top right quadrant of fractal">
+        Top Right
+    </a>
+    <a href="javascript:void(0)" onclick='bottomLeft()' class="btn btn-default" id='button_bottomleft'
+       data-toggle="tooltip" data-placement="top" title="Zoom into bottom left quadrant of fractal">
+        Bottom Left
+    </a>
+    <a href="javascript:void(0)" onclick='bottomRight()' class="btn btn-default" id='button_bottomright'
+       data-toggle="tooltip" data-placement="top" title="Zoom into bottom right quadrant of fractal">
+        Bottom Right
+    </a>
+</div>
+<div class="clear"></div>
+<br />
+<br />
+<img src="" id="fractal_img" />
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        refreshImg();
+    });
+
+    function refreshImg() {
+        $("#loadWrapper").show();
+        calcZoom();
+        var url = "/api/Services/GetFractal/" + $("#min_x").val() +
+                "/" + $("#max_x").val() + "/" + $("#min_y").val() +
+                "/" + $("#max_y").val() + "/";
+        $("#fractal_img").attr('src', url);
+    }
+
+    function calcZoom() {
+        var x_zoom = 750 / ($("#max_x").val() - $("#min_x").val());
+        var y_zoom = 500 / ($("#max_y").val() - $("#min_y").val());
+        if (x_zoom < 0)
+            alert("ERROR: Min X > Max X");
+        if (y_zoom < 0)
+            alert("ERROR: Min Y > Max Y");
+        var zoom = parseInt((x_zoom + y_zoom) / 2);
+        $("#zoom").val(zoom);
+    }
+
+    function topLeft() {
+        var x_diff = parseFloat($("#max_x").val()) - parseFloat($("#min_x").val());
+        var y_diff = parseFloat($("#max_y").val()) - parseFloat($("#min_y").val());
+        $("#max_x").val(parseFloat($("#max_x").val()) - (x_diff / 2));
+        $("#max_y").val(parseFloat($("#max_y").val()) - (y_diff / 2));
+        calcZoom();
+        refreshImg();
+    }
+    function topRight() {
+        var x_diff = parseFloat($("#max_x").val()) - parseFloat($("#min_x").val());
+        var y_diff = parseFloat($("#max_y").val()) - parseFloat($("#min_y").val());
+        $("#min_x").val(parseFloat($("#min_x").val()) + (x_diff / 2));
+        $("#max_y").val(parseFloat($("#max_y").val()) - (y_diff / 2));
+        calcZoom();
+        refreshImg();
+    }
+    function bottomLeft() {
+        var x_diff = parseFloat($("#max_x").val()) - parseFloat($("#min_x").val());
+        var y_diff = parseFloat($("#max_y").val()) - parseFloat($("#min_y").val());
+        $("#max_x").val(parseFloat($("#max_x").val()) - (x_diff / 2));
+        $("#min_y").val(parseFloat($("#min_y").val()) + (y_diff / 2));
+        calcZoom();
+        refreshImg();
+    }
+    function bottomRight() {
+        var x_diff = parseFloat($("#max_x").val()) - parseFloat($("#min_x").val());
+        var y_diff = parseFloat($("#max_y").val()) - parseFloat($("#min_y").val());
+        $("#min_x").val(parseFloat($("#min_x").val()) + (x_diff / 2));
+        $("#min_y").val(parseFloat($("#min_y").val()) + (y_diff / 2));
+        calcZoom();
+        refreshImg();
+    }
+
+    $("#fractal_img").on('load', function () {
+        $("#loadWrapper").hide();
+    });
+</script>
