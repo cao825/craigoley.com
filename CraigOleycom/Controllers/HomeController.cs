@@ -22,5 +22,10 @@ namespace CraigOleycom.Controllers
         {
             return View();
         }
+
+        public ActionResult coTables()
+        {
+            return View();
+        }
     }
 }

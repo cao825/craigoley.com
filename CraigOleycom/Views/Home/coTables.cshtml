@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewBag.Title = "coTables";
+}
+
+<h2>coTables</h2>
+
+<table id="coTable">
+    <thead>
+        <tr>
+            <th>Head 1</th>
+            <th>Head 2</th>
+            <th>Head 3</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>a</td>
+            <td>4</td>
+            <td>jwoi</td>
+        </tr>
+        <tr>
+            <td>b</td>
+            <td>3</td>
+            <td>oieirw</td>
+        </tr>
+        <tr>
+            <td>c</td>
+            <td>2</td>
+            <td>erpo</td>
+        </tr>
+    </tbody>
+</table>
+
+<script type="text/javascript" src="~/Scripts/coTables.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#coTable").coTable();
+    })
+</script>

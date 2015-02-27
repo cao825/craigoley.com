@@ -241,6 +241,12 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\css\coTableImg\sort_asc.png" />
+    <Content Include="Content\css\coTableImg\sort_asc_disabled.png" />
+    <Content Include="Content\css\coTableImg\sort_both.png" />
+    <Content Include="Content\css\coTableImg\sort_desc.png" />
+    <Content Include="Content\css\coTableImg\sort_desc_disabled.png" />
+    <Content Include="Content\css\coTables.css" />
     <Content Include="Content\css\font-awesome.css" />
     <Content Include="Content\css\font-awesome.min.css" />
     <Content Include="Content\Files\ColorFile.txt" />
@@ -280,6 +286,7 @@
     <Content Include="Scripts\angular-ui\ui-bootstrap.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\coTables.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -333,10 +340,12 @@
     <Content Include="Views\Projects\Edit.cshtml" />
     <Content Include="Views\Projects\Index.cshtml" />
     <Content Include="Views\Home\Fractal.cshtml" />
+    <Content Include="Views\Home\coTables.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\App_LocalResources\" />
+    <Folder Include="Content\Images\site\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
