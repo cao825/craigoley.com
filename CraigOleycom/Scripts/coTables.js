@@ -2,7 +2,8 @@
     $.fn.coTable = function (options) {
         var coTable = this;
         var table_id = coTable.attr('id');
-        if ((typeof table_id === undefined) || (table_id === null) || (table_id === "")) {
+        var table_body = $("table#" + table_id + " tbody");
+        if ((typeof table_id == "undefined") || (table_id === null) || (table_id === "")) {
             table_id = "coTable" + Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
             coTable.attr('id', table_id);
         }
@@ -20,78 +21,106 @@
             settings.img_path = settings.img_path + "/";
         }
         var header_count = 0;
+        var header_info = new Array();
 
         coTable.addClass('coTable');
         if(settings.sortable) {
-            var sortable_html = "<div class='sortHeaderBoth' style='float:right'>" + 
+            var sortable_html = "<div class='coSortHeaderBoth' style='float:right'>" + 
                 "<img src='" + settings.img_path + "sort_both.png' height='15' /></div>" +
-                "<div class='sortSpinner' style='float:right; display:none'>Sorting...</div>";
+                "<div class='coSortSpinner' style='float:right; display:none'>Sorting...</div>";
         }
 
         coTable.find('th').each(function () {
             var this_th = $(this);
-            if (!this_th.hasClass('sortHeader') && (settings.sortable)) {
-                this_th.addClass('sortHeader');
+            if (!this_th.hasClass('coSortHeader') && (settings.sortable)) {
+                this_th.addClass('coSortHeader');
                 this_th.html(this_th.html() + sortable_html);
             }
-            this_th.attr('id', 'coTable' + header_count);
+            var this_th_id = this_th.attr('id');
+            if ((typeof curr_id == "undefined") || (curr_id === null) || (curr_id === "")) {
+                this_th_id = 'coTable' + header_count;
+                this_th.attr('id', this_th_id);
+            }
+            header_info.push({
+                id: this_th_id,
+                width: this_th.width()
+            });
             header_count++;
         });
 
-        $(".sortHeader").click(function () {
+        if (settings.filterable) {
+            var body_html = table_body.html();
+            var filter_row = "<tr class='coFilters' id='" + table_id + "_coFilters'>";
+            for (var i = 0; i < header_count; i++) {
+                var input_size = Math.round(header_info[i].width / 10);
+                filter_row = filter_row + "<td class='coFilter'><input size='" + input_size + "' /></td>";
+            }
+            filter_row = filter_row + "</tr>";
+            table_body.html(filter_row + body_html);
+        }
+
+        $(".filters").click(function () {
+
+        });
+
+        $(".coSortHeader").click(function () {
             //Someone clicked a TH - let's do this thing.
             var my_elem = $(this);
-            $(".sortHeaderBoth").remove();
+            $(".coSortHeaderBoth").remove();
             coTable.find('th').each(function () {
                 var my_th = $(this);
                 //For every TH that hasn't been clicked, reset the sortable image to show nothing sorted in that column.
                 if (my_th.attr('id') != my_elem.attr('id')) {
                     my_th.html(my_th.html() + 
-                        "<div class='sortHeaderBoth' style='float:right'>" +
+                        "<div class='coSortHeaderBoth' style='float:right'>" +
                         "<img src='" + settings.img_path + "sort_both.png' height='15' /></div>");
                 }
             });
-            $("#sortHeaderImg").remove();
-            my_elem.find(".sortSpinner").show(function () {
+            $("#coSortHeaderImg").remove();
+            my_elem.find(".coSortSpinner").show(function () {
                 //Show the little arrows pointing the right way, set a class so we know which way it is sorted, and then do the sort
-                if (my_elem.hasClass("ascHeader")) {
-                    $(".sortHeader").removeClass("ascHeader");
-                    $(".sortHeader").removeClass("descHeader");
-                    my_elem.addClass("descHeader");
-                    doSort(table_id, my_elem.index() + 1, "desc");
-                    my_elem.html(my_elem.html() + "<div id='sortHeaderImg' style='float:right'>" +
+                if (my_elem.hasClass("coAscHeader")) {
+                    $(".coSortHeader").removeClass("coAscHeader");
+                    $(".coSortHeader").removeClass("coDescHeader");
+                    my_elem.addClass("coDescHeader");
+                    doSort(table_id, table_body, my_elem.index() + 1, "desc");
+                    my_elem.html(my_elem.html() + "<div id='coSortHeaderImg' style='float:right'>" +
                         "<img src='" + settings.img_path + "sort_desc.png' height='15' /></div>");
-                } else if (my_elem.hasClass("descHeader")) {
-                    $(".sortHeader").removeClass("ascHeader");
-                    $(".sortHeader").removeClass("descHeader");
-                    my_elem.addClass("ascHeader");
-                    doSort(table_id, my_elem.index() + 1, "asc");
-                    my_elem.html(my_elem.html() + "<div id='sortHeaderImg' style='float:right'>" +
+                } else if (my_elem.hasClass("coDescHeader")) {
+                    $(".coSortHeader").removeClass("coAscHeader");
+                    $(".coSortHeader").removeClass("coDescHeader");
+                    my_elem.addClass("coAscHeader");
+                    doSort(table_id, table_body, my_elem.index() + 1, "asc");
+                    my_elem.html(my_elem.html() + "<div id='coSortHeaderImg' style='float:right'>" +
                         "<img src='" + settings.img_path + "sort_asc.png' height='15' /></div>");
                 } else {
-                    $(".sortHeader").removeClass("ascHeader");
-                    $(".sortHeader").removeClass("descHeader");
-                    my_elem.addClass("ascHeader");
-                    doSort(table_id, my_elem.index() + 1, "asc");
-                    my_elem.html(my_elem.html() + "<div id='sortHeaderImg' style='float:right'>" +
+                    $(".coSortHeader").removeClass("coAscHeader");
+                    $(".coSortHeader").removeClass("coDescHeader");
+                    my_elem.addClass("coAscHeader");
+                    doSort(table_id, table_body, my_elem.index() + 1, "asc");
+                    my_elem.html(my_elem.html() + "<div id='coSortHeaderImg' style='float:right'>" +
                         "<img src='" + settings.img_path + "sort_asc.png' height='15' /></div>");
                 }
                 //refresh the table so filters work as expected
-                my_elem.find(".sortSpinner").hide();
+                my_elem.find(".coSortSpinner").hide();
             });
         });
 
         //Controller function for running the sort of a table with given ID, by given col
-        function doSort(table_id, col, type) {
+        function doSort(table_id, table_body, col, type) {
             var arr = new Array();
             //Build an array of all the data in that column
             $("table#" + table_id + " tbody tr td:nth-child(" + col + ")").each(function () {
                 var this_elem = $(this);
-                arr.push({ elem: this_elem, data: getSortData(this_elem.html()) });
+                if(!this_elem.hasClass('coFilter'))
+                    arr.push({ elem: this_elem, data: getSortData(this_elem.html()) });
             });
             //Perform a quick sort on the array of type (asc, desc)
             arr = quicksort(arr, type);
-            var sorted_table = "";
+            var filter_html = "<tr class='coFilters' id='" + table_id + "_coFilters'>" +
+                $("table#" + table_id + " tbody tr.coFilters").html() +
+                "</tr>";
+            var sorted_table = filter_html;
             for (var i = 0; i < arr.length; i++) {
                 var attr_list = "";
                 //Reset all the attributes of the given TR we are moving around
@@ -110,7 +139,7 @@
                         "</tr>";
             }
             //Apply the new sorted table into the tbody wrapper of the old table
-            $("table#" + table_id + " tbody").html(sorted_table);
+            table_body.html(sorted_table);
             /*
             if ($("table" + table_id).hasClass("alternate")) {
                 //Reapply alternate colors to table rows

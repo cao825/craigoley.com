@@ -1,8 +1,6 @@
 ﻿.coTable {
 
 }
-.sortHeaderBoth {
-}
-.sortHeader {
+.coSortHeader {
     cursor: pointer;
 }
