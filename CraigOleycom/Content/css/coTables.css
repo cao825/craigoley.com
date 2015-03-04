@@ -4,3 +4,6 @@
 .coSortHeader {
     cursor: pointer;
 }
+.coTableHidden {
+    display: none;
+}

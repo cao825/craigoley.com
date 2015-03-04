@@ -1,5 +1,6 @@
 ﻿(function ($) {
     $.fn.coTable = function (options) {
+        ///// setup /////
         var coTable = this;
         var table_id = coTable.attr('id');
         var table_body = $("table#" + table_id + " tbody");
@@ -7,10 +8,11 @@
             table_id = "coTable" + Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
             coTable.attr('id', table_id);
         }
-        //default options
+        ///// default options /////
         var settings = $.extend({
             //allow column filtering
             filterable: true,
+            filter_case_sensitive: true,
             //allow column sorting
             sortable: true,
             //allow export to excel
@@ -23,6 +25,7 @@
         var header_count = 0;
         var header_info = new Array();
 
+        ///// start main function /////
         coTable.addClass('coTable');
         if(settings.sortable) {
             var sortable_html = "<div class='coSortHeaderBoth' style='float:right'>" + 
@@ -53,14 +56,36 @@
             var filter_row = "<tr class='coFilters' id='" + table_id + "_coFilters'>";
             for (var i = 0; i < header_count; i++) {
                 var input_size = Math.round(header_info[i].width / 10);
-                filter_row = filter_row + "<td class='coFilter'><input size='" + input_size + "' /></td>";
+                filter_row = filter_row + "<td class='coFilter' id='coFilterCell_" + i + "'>" + 
+                    "<input size='" + input_size + "' class='coFilterInput form-control text-box single-line' " +
+                        "name='coFilter_" + i + "' id='coFilter_" + i + "' type='text' />" +
+                    "</td>";
             }
             filter_row = filter_row + "</tr>";
             table_body.html(filter_row + body_html);
         }
 
-        $(".filters").click(function () {
+        ///// end main function /////
 
+        ///// start event functions /////
+        $(".coFilterInput").keyup(function (event) {
+            var this_filter = $(event.target);
+            var this_cell = this_filter.parent();
+            var columnNum = this_cell.index() + 1;
+            var search_text = this_filter.val();
+            this_cell.closest('table')
+                .find('td:nth-child(' + columnNum + ')')
+                .each(function () {
+                    var search_cell = $(this);
+                    var curr_row = search_cell.parent();
+                    if ((search_text != "") &&
+                        (!search_cell.hasClass('coFilter')) &&
+                        (search_cell.text().search(search_text) === -1)) {
+                        curr_row.addClass('coTableHidden');
+                    } else {
+                        curr_row.removeClass('coTableHidden');
+                    }
+                });
         });
 
         $(".coSortHeader").click(function () {
@@ -105,6 +130,10 @@
                 my_elem.find(".coSortSpinner").hide();
             });
         });
+
+        ///// end event functions /////
+
+        ///// start called functions /////
 
         //Controller function for running the sort of a table with given ID, by given col
         function doSort(table_id, table_body, col, type) {
