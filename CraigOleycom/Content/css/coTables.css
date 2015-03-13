@@ -1,9 +1,27 @@
 ﻿.coTable {
-
 }
 .coSortHeader {
     cursor: pointer;
 }
 .coTableHidden {
+    display: none;
+}
+.coSortWrapper {
+    position: relative;
+}
+.coSortContent {
+    display: inline;
+}
+.coSortSpinner {
+    padding-top: 20px;
+    margin-top: 20px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+.coClear {
+    clear: both;
+}
+.coSortHidden {
     display: none;
 }
