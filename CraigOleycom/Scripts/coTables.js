@@ -68,12 +68,15 @@
             table_body.html(filter_row + body_html);
         }
 
+        function refresh() {
+            filterable();
+        }
+
         ///// end main function /////
 
         ///// start event functions /////
-        $(function( $ ) {
+        function filterable() {
             $(".coFilterInput").keyup(function (event) {
-                alert("here");
                 var this_filter = $(event.target);
                 var this_cell = this_filter.parent();
                 var columnNum = this_cell.index() + 1;
@@ -82,7 +85,6 @@
                     .find('td:nth-child(' + columnNum + ')')
                     .each(function () {
                         var search_cell = $(this);
-                        alert(search_cell.text());
                         var curr_row = search_cell.parent();
                         if ((search_text != "") &&
                             (!search_cell.hasClass('coFilter')) &&
@@ -94,10 +96,8 @@
                     });
                 return this;
             });
-            return this;
-        });
+        }
 
-        $(function ($) {
             $(".coSortHeader").click(function () {
                 //Someone clicked a TH - let's do this thing.
                 var my_elem = $(this);
@@ -145,8 +145,6 @@
                 });
                 return this;
             });
-            return this;
-        });
 
         ///// end event functions /////
 
@@ -190,6 +188,7 @@
             }
             //Apply the new sorted table into the tbody wrapper of the old table
             table_body.html(sorted_table);
+            refresh();
             /*
             if ($("table" + table_id).hasClass("alternate")) {
                 //Reapply alternate colors to table rows
