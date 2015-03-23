@@ -68,32 +68,52 @@
             table_body.html(filter_row + body_html);
         }
 
-        function refresh() {
-            filterable();
-        }
+        refresh();
 
         ///// end main function /////
 
         ///// start event functions /////
         function filterable() {
             $(".coFilterInput").keyup(function (event) {
-                var this_filter = $(event.target);
-                var this_cell = this_filter.parent();
-                var columnNum = this_cell.index() + 1;
-                var search_text = this_filter.val();
-                this_cell.closest('table')
-                    .find('td:nth-child(' + columnNum + ')')
+                $(this).closest('table')
+                    .find('tr')
                     .each(function () {
-                        var search_cell = $(this);
-                        var curr_row = search_cell.parent();
-                        if ((search_text != "") &&
-                            (!search_cell.hasClass('coFilter')) &&
-                            (search_cell.text().search(search_text) === -1)) {
-                            curr_row.addClass('coTableHidden');
-                        } else {
-                            curr_row.removeClass('coTableHidden');
-                        }
+                        $(this).removeClass('coTableToHide')
+                            .addClass('coTableToShow');
                     });
+                $(".coFilterInput").each(function () {
+                    var this_filter = $(this);
+                    if (this_filter.val()) {
+                        var this_cell = this_filter.parent();
+                        var columnNum = this_cell.index() + 1;
+                        var search_text = this_filter.val();
+                        this_cell.closest('table')
+                            .find('td:nth-child(' + columnNum + ')')
+                            .each(function () {
+                                var search_cell = $(this);
+                                var curr_row = search_cell.parent();
+                                if ((search_text != "") &&
+                                    (!search_cell.hasClass('coFilter')) &&
+                                    (search_cell.text().search(search_text) === -1)) {
+                                    curr_row.addClass('coTableToHide')
+                                        .removeClass('coTableToShow');
+                                }
+                            });
+                    }
+                    return this;
+                });
+                $(".coTableToHide").each(function () {
+                    var this_row = $(this);
+                    this_row.addClass('coTableHidden')
+                        .removeClass('coTableToHide')
+                        .removeClass('coTableToShow');
+                    return this;
+                });
+                $(".coTableToShow").each(function () {
+                    $(this).removeClass('coTableHidden')
+                        .removeClass('coTableToShow');
+                    return this;
+                });
                 return this;
             });
         }
@@ -149,6 +169,10 @@
         ///// end event functions /////
 
         ///// start called functions /////
+
+        function refresh() {
+            filterable();
+        }
 
         //Controller function for running the sort of a table with given ID, by given col
         function doSort(table_id, table_body, col, type) {
