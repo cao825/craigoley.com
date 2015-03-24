@@ -17,7 +17,8 @@
             sortable: true,
             //allow export to excel
             exportable: true,
-            img_path: "/Content/css/coTableImg/"
+            img_path: "/Content/css/coTableImg/",
+            filter_debug: false
         }, options);
         if (settings.img_path.slice(-1) !== "/") {
             settings.img_path = settings.img_path + "/";
@@ -118,53 +119,55 @@
             });
         }
 
-            $(".coSortHeader").click(function () {
-                //Someone clicked a TH - let's do this thing.
-                var my_elem = $(this);
-                $(".coSortHeaderBoth").remove();
-                coTable.find('th').each(function () {
-                    var my_th = $(this);
-                    //For every TH that hasn't been clicked, reset the sortable image to show nothing sorted in that column.
-                    if (my_th.attr('id') != my_elem.attr('id')) {
-                        my_th.find(".coSortHeaderBreak").before(
-                            "<div class='coSortHeaderBoth' style='float:right'>" +
-                            "<img src='" + settings.img_path + "sort_both.png' height='15' /></div>");
-                    }
-                });
-                $("#coSortHeaderImg").remove();
-                my_elem.find(".coSortContent").hide();
-                my_elem.find(".coSortSpinner").show(function () {
-                    //Show the little arrows pointing the right way, set a class so we know which way it is sorted, and then do the sort
-                    if (my_elem.hasClass("coAscHeader")) {
-                        $(".coSortHeader").removeClass("coAscHeader");
-                        $(".coSortHeader").removeClass("coDescHeader");
-                        my_elem.addClass("coDescHeader");
-                        doSort(table_id, table_body, my_elem.index() + 1, "desc");
-                        my_elem.find(".coSortHeaderBreak").before("<div id='coSortHeaderImg' style='float:right'>" +
-                            "<img src='" + settings.img_path + "sort_desc.png' height='15' /></div>");
-                    } else if (my_elem.hasClass("coDescHeader")) {
-                        $(".coSortHeader").removeClass("coAscHeader");
-                        $(".coSortHeader").removeClass("coDescHeader");
-                        my_elem.addClass("coAscHeader");
-                        doSort(table_id, table_body, my_elem.index() + 1, "asc");
-                        my_elem.find(".coSortHeaderBreak").before("<div id='coSortHeaderImg' style='float:right'>" +
-                            "<img src='" + settings.img_path + "sort_asc.png' height='15' /></div>");
-                    } else {
-                        $(".coSortHeader").removeClass("coAscHeader");
-                        $(".coSortHeader").removeClass("coDescHeader");
-                        my_elem.addClass("coAscHeader");
-                        doSort(table_id, table_body, my_elem.index() + 1, "asc");
-                        my_elem.find(".coSortHeaderBreak").before("<div id='coSortHeaderImg' style='float:right'>" +
-                            "<img src='" + settings.img_path + "sort_asc.png' height='15' /></div>");
-                    }
-                    //refresh the table so filters work as expected
-                    my_elem.find(".coSortSpinner").hide();
-                    my_elem.find(".coSortSpinner").addClass("coSortHidden");
-                    my_elem.find(".coSortContent").show();
-
-                });
-                return this;
+        $(".coSortHeader").click(function () {
+            //Someone clicked a TH - let's do this thing.
+            var my_elem = $(this);
+            $(".coSortHeaderBoth").remove();
+            coTable.find('th').each(function () {
+                var my_th = $(this);
+                //For every TH that hasn't been clicked, reset the sortable image to show nothing sorted in that column.
+                if (my_th.attr('id') != my_elem.attr('id')) {
+                    my_th.find(".coSortHeaderBreak").before(
+                        "<div class='coSortHeaderBoth' style='float:right'>" +
+                        "<img src='" + settings.img_path + "sort_both.png' height='15' /></div>");
+                }
             });
+            $("#coSortHeaderImg").remove();
+            my_elem.find(".coSortContent").hide();
+            __coDebug__ShowAllFilters("clickFunction pre-sort");
+            my_elem.find(".coSortSpinner").show(function () {
+                //Show the little arrows pointing the right way, set a class so we know which way it is sorted, and then do the sort
+                if (my_elem.hasClass("coAscHeader")) {
+                    $(".coSortHeader").removeClass("coAscHeader");
+                    $(".coSortHeader").removeClass("coDescHeader");
+                    my_elem.addClass("coDescHeader");
+                    doSort(table_id, table_body, my_elem.index() + 1, "desc");
+                    my_elem.find(".coSortHeaderBreak").before("<div id='coSortHeaderImg' style='float:right'>" +
+                        "<img src='" + settings.img_path + "sort_desc.png' height='15' /></div>");
+                } else if (my_elem.hasClass("coDescHeader")) {
+                    $(".coSortHeader").removeClass("coAscHeader");
+                    $(".coSortHeader").removeClass("coDescHeader");
+                    my_elem.addClass("coAscHeader");
+                    doSort(table_id, table_body, my_elem.index() + 1, "asc");
+                    my_elem.find(".coSortHeaderBreak").before("<div id='coSortHeaderImg' style='float:right'>" +
+                        "<img src='" + settings.img_path + "sort_asc.png' height='15' /></div>");
+                } else {
+                    $(".coSortHeader").removeClass("coAscHeader");
+                    $(".coSortHeader").removeClass("coDescHeader");
+                    my_elem.addClass("coAscHeader");
+                    doSort(table_id, table_body, my_elem.index() + 1, "asc");
+                    my_elem.find(".coSortHeaderBreak").before("<div id='coSortHeaderImg' style='float:right'>" +
+                        "<img src='" + settings.img_path + "sort_asc.png' height='15' /></div>");
+                }
+                __coDebug__ShowAllFilters("clickFunction post-sort");
+                //refresh the table so filters work as expected
+                my_elem.find(".coSortSpinner").hide();
+                my_elem.find(".coSortSpinner").addClass("coSortHidden");
+                my_elem.find(".coSortContent").show();
+
+            });
+            return this;
+        });
 
         ///// end event functions /////
 
@@ -176,42 +179,44 @@
 
         //Controller function for running the sort of a table with given ID, by given col
         function doSort(table_id, table_body, col, type) {
+            __coDebug__ShowAllFilters("doSort start");
             var arr = new Array();
             //Build an array of all the data in that column
             $("table#" + table_id + " tbody tr td:nth-child(" + col + ")").each(function () {
                 var this_elem = $(this);
-                if(!this_elem.hasClass('coFilter'))
+                if (!this_elem.hasClass('coFilter')) {
                     arr.push({ elem: this_elem, data: getSortData(this_elem.html()) });
+                }
             });
+            __coDebug__ShowAllFilters("doSort Array Created");
             //Perform a quick sort on the array of type (asc, desc)
             arr = quicksort(arr, type);
             if (settings.filterable) {
-                var filter_html = "<tr class='coFilters' id='" + table_id + "_coFilters'>" +
-                    $("table#" + table_id + " tbody tr.coFilters").html() +
-                    "</tr>";
-                var sorted_table = filter_html;
-            } else {
-                sorted_table = "<tr>";
+                var filters = $("table#" + table_id + " tbody tr.coFilters").clone();
             }
+            var sorted_table = "";
             for (var i = 0; i < arr.length; i++) {
                 var attr_list = "";
                 //Reset all the attributes of the given TR we are moving around
-                if (arr[i].elem.parent().attr("onclick") !== "undefined")
+                if (typeof arr[i].elem.parent().attr("onclick") !== "undefined")
                     attr_list = attr_list + " onclick='" + arr[i].elem.parent().attr("onclick") + "'";
-                if (arr[i].elem.parent().attr("id") !== "undefined")
+                if (typeof arr[i].elem.parent().attr("id") !== "undefined")
                     attr_list = attr_list + " id='" + arr[i].elem.parent().attr("id") + "'";
-                if ((arr[i].elem.parent().attr("style") !== "undefined"))
+                if (typeof arr[i].elem.parent().attr("style") !== "undefined")
                     attr_list = attr_list + " style='" + arr[i].elem.parent().attr("style") + "'";
-                if (arr[i].elem.parent().attr("class") !== "undefined")
+                if (typeof arr[i].elem.parent().attr("class") !== "undefined")
                     attr_list = attr_list + " class='" + arr[i].elem.parent().attr("class") + "'";
 
                 sorted_table = sorted_table +
-                        "<tr" + attr_list + ">" +
-                        $(arr[i].elem.parent()).html() +
-                        "</tr>";
+                    "<tr" + attr_list + ">" +
+                    $(arr[i].elem.parent()).html() +
+                    "</tr>";
             }
             //Apply the new sorted table into the tbody wrapper of the old table
             table_body.html(sorted_table);
+            if (settings.filterable) {
+                filters.prependTo($("tbody"));
+            }
             refresh();
             /*
             if ($("table" + table_id).hasClass("alternate")) {
@@ -259,6 +264,19 @@
             }
 
             return quicksort(left, type).concat(pivot, quicksort(right, type));
+        }
+
+        ////////// DEBUG FUNCTIONS ///////////
+
+        function __coDebug__ShowAllFilters(section) {
+            if (settings.filter_debug) {
+                console.log(section);
+                $(".coFilterInput").each(function () {
+                    var elem = $(this);
+                    console.log(elem.attr('id') + ": " + elem.val());
+                });
+            }
+            return this;
         }
 
         return this;
