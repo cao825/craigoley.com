@@ -4,6 +4,7 @@
         var coTable = this;
         var table_id = coTable.attr('id');
         var table_body = $("table#" + table_id + " tbody");
+        var table_head = $("table#" + table_id + " thead");
         if ((typeof table_id == "undefined") || (table_id === null) || (table_id === "")) {
             table_id = "coTable" + Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
             coTable.attr('id', table_id);
@@ -17,6 +18,8 @@
             sortable: true,
             //allow export to excel
             exportable: true,
+            //show table info
+            show_table_info: true,
             img_path: "/Content/css/coTableImg/",
             filter_debug: false
         }, options);
@@ -24,6 +27,7 @@
             settings.img_path = settings.img_path + "/";
         }
         var header_count = 0;
+        var row_count = getRowCount();
         var header_info = new Array();
 
         ///// start main function /////
@@ -56,17 +60,26 @@
         });
 
         if (settings.filterable) {
-            var body_html = table_body.html();
             var filter_row = "<tr class='coFilters' id='" + table_id + "_coFilters'>";
             for (var i = 0; i < header_count; i++) {
                 var input_size = Math.round(header_info[i].width / 10);
-                filter_row = filter_row + "<td class='coFilter' id='coFilterCell_" + i + "'>" + 
+                filter_row = filter_row + "<td class='coFilter' id='" + table_id + "_coFilterCell_" + i + "'>" +
                     "<input size='" + input_size + "' class='coFilterInput form-control text-box single-line' " +
-                        "name='coFilter_" + i + "' id='coFilter_" + i + "' type='text' />" +
+                    "name='coFilter_" + i + "' id='" + table_id + "_coFilter_" + i + "' type='text' />" +
                     "</td>";
             }
             filter_row = filter_row + "</tr>";
-            table_body.html(filter_row + body_html);
+            table_body.prepend(filter_row);
+        }
+
+        if (settings.show_table_info) {
+            var info_html = "<tr class='coTableInfo' id='" + table_id + "_coTableInfo'>" +
+                "<th colspan='" + header_count + "'>" +
+                "Row Count: " +
+                "<span id='" + table_id + "_coTableInfo_rowCount'>" + row_count + "</span>" +
+                "</th></tr>";
+            table_head.append(info_html);
+            setRowCount(getRowCount());
         }
 
         refresh();
@@ -115,6 +128,7 @@
                         .removeClass('coTableToShow');
                     return this;
                 });
+                setRowCount(getRowCount());
                 return this;
             });
         }
@@ -132,7 +146,7 @@
                         "<img src='" + settings.img_path + "sort_both.png' height='15' /></div>");
                 }
             });
-            $("#coSortHeaderImg").remove();
+            $("#" + table_id + "_coSortHeaderImg").remove();
             my_elem.find(".coSortContent").hide();
             __coDebug__ShowAllFilters("clickFunction pre-sort");
             my_elem.find(".coSortSpinner").show(function () {
@@ -142,21 +156,21 @@
                     $(".coSortHeader").removeClass("coDescHeader");
                     my_elem.addClass("coDescHeader");
                     doSort(table_id, table_body, my_elem.index() + 1, "desc");
-                    my_elem.find(".coSortHeaderBreak").before("<div id='coSortHeaderImg' style='float:right'>" +
+                    my_elem.find(".coSortHeaderBreak").before("<div id='" + table_id + "_coSortHeaderImg' style='float:right'>" +
                         "<img src='" + settings.img_path + "sort_desc.png' height='15' /></div>");
                 } else if (my_elem.hasClass("coDescHeader")) {
                     $(".coSortHeader").removeClass("coAscHeader");
                     $(".coSortHeader").removeClass("coDescHeader");
                     my_elem.addClass("coAscHeader");
                     doSort(table_id, table_body, my_elem.index() + 1, "asc");
-                    my_elem.find(".coSortHeaderBreak").before("<div id='coSortHeaderImg' style='float:right'>" +
+                    my_elem.find(".coSortHeaderBreak").before("<div id='" + table_id + "_coSortHeaderImg' style='float:right'>" +
                         "<img src='" + settings.img_path + "sort_asc.png' height='15' /></div>");
                 } else {
                     $(".coSortHeader").removeClass("coAscHeader");
                     $(".coSortHeader").removeClass("coDescHeader");
                     my_elem.addClass("coAscHeader");
                     doSort(table_id, table_body, my_elem.index() + 1, "asc");
-                    my_elem.find(".coSortHeaderBreak").before("<div id='coSortHeaderImg' style='float:right'>" +
+                    my_elem.find(".coSortHeaderBreak").before("<div id='" + table_id + "_coSortHeaderImg' style='float:right'>" +
                         "<img src='" + settings.img_path + "sort_asc.png' height='15' /></div>");
                 }
                 __coDebug__ShowAllFilters("clickFunction post-sort");
@@ -215,7 +229,7 @@
             //Apply the new sorted table into the tbody wrapper of the old table
             table_body.html(sorted_table);
             if (settings.filterable) {
-                filters.prependTo($("tbody"));
+                filters.prependTo(table_body);
             }
             refresh();
             /*
@@ -264,6 +278,24 @@
             }
 
             return quicksort(left, type).concat(pivot, quicksort(right, type));
+        }
+
+        function setRowCount(count) {
+            row_count = count;
+            if (settings.show_table_info) {
+                $("#" + table_id + "_coTableInfo_rowCount").html(row_count);
+            }
+        }
+
+        function getRowCount() {
+            var total_count = $("table#" + table_id + " tbody tr").length;
+            var hidden_count = $("table#" + table_id + " tbody tr.coTableHidden").length;
+            var count = total_count - hidden_count;
+            console.log("Row Count: " + total_count + " - " + hidden_count + " = " + count);
+            if (settings.filterable) {
+                count--;
+            }
+            return count;
         }
 
         ////////// DEBUG FUNCTIONS ///////////
