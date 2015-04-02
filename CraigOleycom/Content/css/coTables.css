@@ -26,5 +26,11 @@
     display: none;
 }
 .coTableInfo {
-    font-size: 0.7em;
+    font-size: 0.8em;
+}
+.coHoverImage:hover {
+    opacity: 0.6;
+}
+.coHoverImage {
+    opacity: 1.0;
 }
