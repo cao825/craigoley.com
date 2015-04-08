@@ -63,7 +63,7 @@
 
         //add header filters
         if (settings.filterable) {
-            var filter_row = "<tr class='coFilters' id='" + table_id + "_coFilters'>";
+            var filter_row = "<tr class='coFilters coNoExport' id='" + table_id + "_coFilters'>";
             for (var i = 0; i < header_count; i++) {
                 var input_size = Math.round(header_info[i].width / 10);
                 filter_row = filter_row + "<td class='coFilter' id='" + table_id + "_coFilterCell_" + i + "'>" +
@@ -84,10 +84,10 @@
         //add table info header items
         if (settings.show_table_info) {
             var info_html = "<tr class='coTableInfo' id='" + table_id + "_coTableInfo'>" +
-                "<th colspan='" + header_count + "'>";
+                "<th colspan='" + header_count + "' class='coNoExport'>";
             if (settings.exportable) {
                 info_html = info_html +
-                    "<a href='javascript:void(0)' onclick='exportTable(\"" + table_id + "\")' class='coHoverImage'>" +
+                    "<a href='javascript:void(0)' onclick='coExportTable(\"" + table_id + "\")' class='coHoverImage'>" +
                     "<i class='fa fa-file-excel-o'></i></a>&ensp;";
             }
             info_html = info_html + "Row Count: " +
@@ -339,18 +339,21 @@
     };
 }(jQuery));
 
-function exportTable(id) {
+function coExportTable(id) {
     $('#coLoadWrapper').show("fast", function () {
         setTimeout(function () {
-            alert("1");
-            alert(id);
             var theTable = $("#" + id);
-            var oo = generateArray(id);
+            var export_file_name = "";
+            if (theTable.attr('coTableExportFileName')) {
+                export_file_name = theTable.attr('coTableExportFileName');
+            } else {
+                export_file_name = "coTableExport_" + Date.now();
+            }
+            var oo = coGenerateArray(id);
             var ranges = oo[1];
 
             /* original data */
             var data = oo[0];
-            var ws_name = "SheetJS";
             console.log(data);
 
             var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
@@ -359,28 +362,58 @@ function exportTable(id) {
             ws['!merges'] = ranges;
 
             /* add worksheet to workbook */
-            wb.SheetNames.push(ws_name);
-            wb.Sheets[ws_name] = ws;
+            wb.SheetNames.push(export_file_name);
+            wb.Sheets[export_file_name] = ws;
 
-            alert("2");
             var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: false, type: 'binary' });
-            alert("3");
-            saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "test.xlsx")
-            alert("4");
+            saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), export_file_name + ".xlsx");
             $("#coLoadWrapper").hide();
         }, 1);
     });
 }
 
-function generateArray(table_id) {
+if (!Date.now) {
+    Date.now = function () {
+        return new Date().getTime();
+    }
+}
+
+function coGenerateArray(table_id) {
     table_id = "#" + table_id;
     var header = new Array();
     var counter = 0;
+    var ranges = [];
+    var out = [];
+    var outRow = [];
     //Gather excel headers from TH
-    $("table" + table_id + " thead tr th").each(function(){
-        header[counter] = $(this).text().replace("Sorting...", "");
-        counter++;
+    $("table" + table_id + " thead tr th").each(function () {
+        var curr_cell = $(this);
+        if (!(curr_cell.hasClass("coNoExport"))) {
+            var tr_counter = 0;
+            var td_counter = counter;
+            var rowspan = curr_cell.attr('rowspan');
+            var colspan = curr_cell.attr('colspan');
+            header[counter] = curr_cell.text().replace("Sorting...", "");
+            var cellValue = header[counter];
+            ranges.forEach(function (range) {
+                if (tr_count >= range.s.r && tr_count <= range.e.r && outRow.length >= range.s.c && outRow.length <= range.e.c) {
+                    for (var i = 0; i <= range.e.c - range.s.c; ++i) outRow.push(null);
+                }
+            });
+
+            //Handle Row Span
+            if (rowspan || colspan) {
+                rowspan = rowspan || 1;
+                colspan = colspan || 1;
+                ranges.push({ s: { r: tr_count, c: outRow.length }, e: { r: tr_count + rowspan - 1, c: outRow.length + colspan - 1 } });
+            };
+
+            //Handle Value
+            outRow.push(cellValue !== "" ? cellValue : null);
+            counter++;
+        }
     });
+    out.push(outRow);
     var details = new Array();
     var tr_count = 0;
     var td_count = 0;
@@ -388,14 +421,12 @@ function generateArray(table_id) {
     var save_tbody_html = tbody.html();
     var regex = /<br\s*[\/]?>/gi;
     tbody.html(save_tbody_html.replace(regex, " ~EL~ "));
-    var ranges = [];
-    var out = [];
             
     //Loop through all rows that are visible (because of filtered tables)
     $(table_id + " tbody tr:visible").each(function() {
         var curr_row = $(this);
-        var outRow = [];
-        if(!(curr_row.hasClass("no_export"))) {
+        outRow = [];
+        if(!(curr_row.hasClass("coNoExport"))) {
             details[tr_count] = new Array();
             td_count = 0;
             //Loop through all cells within the row and gather the text for export
