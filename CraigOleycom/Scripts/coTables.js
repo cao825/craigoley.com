@@ -434,7 +434,7 @@ function coGenerateArray(table_id) {
                 var curr_cell = $(this);
                 var rowspan = curr_cell.attr('rowspan');
                 var colspan = curr_cell.attr('colspan');
-                details[tr_count][td_count] = getText(curr_cell);
+                details[tr_count][td_count] = coGetText(curr_cell);
                 if(details[tr_count][td_count].replace(" ", "").replace(",", "") == parseFloat(details[tr_count][td_count].replace(" ", "").replace(",", ""))) {
                     details[tr_count][td_count] = details[tr_count][td_count].replace(" ", "").replace(",", "");
                 }
@@ -474,7 +474,7 @@ function coGenerateArray(table_id) {
     return [out, ranges];
 };
 
-function datenum(v, date1904) {
+function coDatenum(v, date1904) {
     if (date1904) v += 1462;
     var epoch = Date.parse(v);
     return (epoch - new Date(Date.UTC(1899, 11, 30))) / (24 * 60 * 60 * 1000);
@@ -497,7 +497,7 @@ function sheet_from_array_of_arrays(data, opts) {
             else if (typeof cell.v === 'boolean') cell.t = 'b';
             else if (cell.v instanceof Date) {
                 cell.t = 'n'; cell.z = XLSX.SSF._table[14];
-                cell.v = datenum(cell.v);
+                cell.v = coDatenum(cell.v);
             }
             else cell.t = 's';
 
@@ -522,7 +522,7 @@ function s2ab(s) {
 }
 
 //recursive function to get the text we want from all elements of a TD for exporting a table
-function getText(elem) {
+function coGetText(elem) {
     var my_text = "";
     var tag = elem.get(0).tagName;
     switch (tag) {
@@ -566,7 +566,7 @@ function getText(elem) {
                         my_text = my_text + " ~EL~ ";
                     }
                     else if (child_elem.is(":visible")) {
-                        my_text = my_text + " " + getText(child_elem);
+                        my_text = my_text + " " + coGetText(child_elem);
                     }
                 });
                 return " " + my_text;
