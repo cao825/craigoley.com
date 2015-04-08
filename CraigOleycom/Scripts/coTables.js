@@ -18,11 +18,13 @@
             sortable: true,
             //allow export to excel
             exportable: true,
+            //set custom xlsx file prefix
+            exportFileName: "",
             //show table info
             show_table_info: true,
-            img_path: "/Content/css/coTableImg/",
-            filter_debug: false
+            img_path: "/Content/css/coTableImg/"
         }, options);
+
         //validate image path ends in "/"
         if (settings.img_path.slice(-1) !== "/") {
             settings.img_path = settings.img_path + "/";
@@ -79,6 +81,9 @@
         if (settings.exportable) {
             //have to enable table info, because that's where the export button will go
             settings.show_table_info = true;
+            if (settings.exportFileName != "") {
+                coTable.attr('coTableExportFileName', settings.exportFileName);
+            }
         }
 
         //add table info header items
@@ -168,7 +173,7 @@
             });
             $("#" + table_id + "_coSortHeaderImg").remove();
             my_elem.find(".coSortContent").hide();
-            __coDebug__ShowAllFilters("clickFunction pre-sort");
+
             my_elem.find(".coSortSpinner").show(function () {
                 //Show the little arrows pointing the right way, set a class so we know which way it is sorted, and then do the sort
                 if (my_elem.hasClass("coAscHeader")) {
@@ -193,7 +198,7 @@
                     my_elem.find(".coSortHeaderBreak").before("<div id='" + table_id + "_coSortHeaderImg' style='float:right'>" +
                         "<img src='" + settings.img_path + "sort_asc.png' height='15' /></div>");
                 }
-                __coDebug__ShowAllFilters("clickFunction post-sort");
+
                 //refresh the table so filters work as expected
                 my_elem.find(".coSortSpinner").hide();
                 my_elem.find(".coSortSpinner").addClass("coSortHidden");
@@ -218,7 +223,6 @@
 
         //Controller function for running the sort of a table with given ID, by given col
         function doSort(table_id, table_body, col, type) {
-            __coDebug__ShowAllFilters("doSort start");
             var arr = new Array();
             //Build an array of all the data in that column
             $("table#" + table_id + " tbody tr td:nth-child(" + col + ")").each(function () {
@@ -227,7 +231,6 @@
                     arr.push({ elem: this_elem, data: getSortData(this_elem.html()) });
                 }
             });
-            __coDebug__ShowAllFilters("doSort Array Created");
             //Perform a quick sort on the array of type (asc, desc)
             arr = quicksort(arr, type);
             if (settings.filterable) {
@@ -322,19 +325,6 @@
             return count;
         }
 
-        ////////// DEBUG FUNCTIONS ///////////
-
-        function __coDebug__ShowAllFilters(section) {
-            if (settings.filter_debug) {
-                console.log(section);
-                $(".coFilterInput").each(function () {
-                    var elem = $(this);
-                    console.log(elem.attr('id') + ": " + elem.val());
-                });
-            }
-            return this;
-        }
-
         return this;
     };
 }(jQuery));
@@ -345,7 +335,7 @@ function coExportTable(id) {
             var theTable = $("#" + id);
             var export_file_name = "";
             if (theTable.attr('coTableExportFileName')) {
-                export_file_name = theTable.attr('coTableExportFileName');
+                export_file_name = theTable.attr('coTableExportFileName') + "_" + Date.now();
             } else {
                 export_file_name = "coTableExport_" + Date.now();
             }
