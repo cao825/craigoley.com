@@ -22,6 +22,10 @@
             exportFileName: "",
             //show table info
             show_table_info: true,
+            //alternate row style
+            alternate_rows: true,
+            //highlight hover row
+            highlight_hover_row: true,
             img_path: "/Content/css/coTableImg/"
         }, options);
 
@@ -102,7 +106,11 @@
             setRowCount(getRowCount());
         }
 
-        refresh();
+        if (settings.highlight_hover_row) {
+            $("table#" + table_id).addClass("table-hover");
+        }
+
+        refresh(table_id);
 
         ///// end main function /////
 
@@ -154,6 +162,7 @@
                     return this;
                 });
                 setRowCount(getRowCount());
+                refresh(table_id);
                 return this;
             });
         }
@@ -208,17 +217,23 @@
             return this;
         });
 
-        function exportable() {
-
-        }
-
         ///// end event functions /////
 
         ///// start called functions /////
 
-        function refresh() {
+        function refresh(table_id) {
             filterable();
-            exportable();
+            if (settings.alternate_rows) {
+                setAltRows(table_id);
+            }
+        }
+
+        //set alternate rows
+        function setAltRows(table_id) {
+            //Reapply alternate colors to table rows
+            $("table#" + table_id).removeClass("table-striped");
+            $("table#" + table_id).addClass("table-striped");
+
         }
 
         //Controller function for running the sort of a table with given ID, by given col
@@ -259,15 +274,7 @@
             if (settings.filterable) {
                 filters.prependTo(table_body);
             }
-            refresh();
-            /*
-            if ($("table" + table_id).hasClass("alternate")) {
-                //Reapply alternate colors to table rows
-                $("table" + table_id + " tr").removeClass("even");
-                $("table" + table_id + " tr").removeClass("odd");
-                $(".alternate tr:nth-child(even)").addClass("even");
-                $(".alternate tr:nth-child(odd)").addClass("odd");
-            }*/
+            refresh(table_id);
         }
 
         function getSortData(my_str) {
