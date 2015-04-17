@@ -111,6 +111,8 @@
         }
 
         refresh(table_id);
+        var normal_bg_color = $("table#" + table_id).css('background-color');
+        var stripe_bg_color = $("table#" + table_id + " tbody tr:first").css('background-color');
 
         ///// end main function /////
 
@@ -231,9 +233,20 @@
         //set alternate rows
         function setAltRows(table_id) {
             //Reapply alternate colors to table rows
-            $("table#" + table_id).removeClass("table-striped");
-            $("table#" + table_id).addClass("table-striped");
-
+            var table = $("table#" + table_id);
+            if (!table.hasClass("table-striped")) {
+                table.addClass("table-striped");
+            } else {
+                var count = 0;
+                $("table#" + table_id + " tbody tr:visible").each(function () {
+                    if (count % 2 === 1) {
+                        $(this).css('background-color', normal_bg_color);
+                    } else {
+                        $(this).css('background-color', stripe_bg_color);
+                    }
+                    count++;
+                });
+            }
         }
 
         //Controller function for running the sort of a table with given ID, by given col
