@@ -5,8 +5,8 @@
         var table_id = coTable.attr('id');
         var table_body = $("table#" + table_id + " tbody");
         var table_head = $("table#" + table_id + " thead");
-        var normal_bg_color = $("table#" + table_id).css('background-color');
-        var stripe_bg_color = $("table#" + table_id + " tbody tr:first").css('background-color');
+        var normal_bg_color = rgb2hex($("table#" + table_id).css('background-color'));
+        var stripe_bg_color = rgb2hex($("table#" + table_id + " tbody tr:first").css('background-color'));
         ///// default options /////
         var settings = $.extend({
             //allow column filtering
@@ -243,10 +243,8 @@
                 var count = 0;
                 $("table#" + table_id + " tbody tr:visible").each(function () {
                     if (count % 2 === 1) {
-                        alert(normal_bg_color);
                         $(this).css('background-color', normal_bg_color);
                     } else {
-                        alert(stripe_bg_color);
                         $(this).css('background-color', stripe_bg_color);
                     }
                     count++;
@@ -348,6 +346,14 @@
                 count--;
             }
             return count;
+        }
+
+        function rgb2hex(rgb) {
+            rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+            return (rgb && rgb.length === 4) ? "#" +
+             ("0" + parseInt(rgb[1], 10).toString(16)).slice(-2) +
+             ("0" + parseInt(rgb[2], 10).toString(16)).slice(-2) +
+             ("0" + parseInt(rgb[3], 10).toString(16)).slice(-2) : '';
         }
 
         return $(this);
