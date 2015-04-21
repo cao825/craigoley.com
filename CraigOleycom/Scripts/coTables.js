@@ -76,13 +76,13 @@
                 var filter_row = "<tr class='coFilters coNoExport' id='" + table_id + "_coFilters'>";
                 for (var i = 0; i < header_count; i++) {
                     var input_size = Math.round(header_info[i].width / 10);
-                    filter_row = filter_row + "<td class='coFilter' id='" + table_id + "_coFilterCell_" + i + "'>" +
+                    filter_row = filter_row + "<th class='coFilter' id='" + table_id + "_coFilterCell_" + i + "'>" +
                         "<input size='" + input_size + "' class='coFilterInput form-control text-box single-line' " +
                         "name='coFilter_" + i + "' id='" + table_id + "_coFilter_" + i + "' type='text' />" +
-                        "</td>";
+                        "</th>";
                 }
                 filter_row = filter_row + "</tr>";
-                table_body.prepend(filter_row);
+                table_head.append(filter_row);
             }
 
             //add exportable header items
@@ -125,52 +125,50 @@
          *      needs to be within a callable function for after sortable 
          *      table refresh
          */
-        function filterable() {
-            $(".coFilterInput").keyup(function (event) {
-                $(this).closest('table')
-                    .find('tr')
-                    .each(function () {
-                        $(this).removeClass('coTableToHide')
-                            .addClass('coTableToShow');
-                    });
-                $(".coFilterInput").each(function () {
-                    var this_filter = $(this);
-                    if (this_filter.val()) {
-                        var this_cell = this_filter.parent();
-                        var columnNum = this_cell.index() + 1;
-                        var search_text = this_filter.val();
-                        this_cell.closest('table')
-                            .find('td:nth-child(' + columnNum + ')')
-                            .each(function () {
-                                var search_cell = $(this);
-                                var curr_row = search_cell.parent();
-                                if ((search_text != "") &&
-                                    (!search_cell.hasClass('coFilter')) &&
-                                    (search_cell.text().search(search_text) === -1)) {
-                                    curr_row.addClass('coTableToHide')
-                                        .removeClass('coTableToShow');
-                                }
-                            });
-                    }
-                    return this;
+        $(".coFilterInput").keyup(function (event) {
+            $(this).closest('table')
+                .find('tr')
+                .each(function () {
+                    $(this).removeClass('coTableToHide')
+                        .addClass('coTableToShow');
                 });
-                $(".coTableToHide").each(function () {
-                    var this_row = $(this);
-                    this_row.addClass('coTableHidden')
-                        .removeClass('coTableToHide')
-                        .removeClass('coTableToShow');
-                    return this;
-                });
-                $(".coTableToShow").each(function () {
-                    $(this).removeClass('coTableHidden')
-                        .removeClass('coTableToShow');
-                    return this;
-                });
-                setRowCount(getRowCount());
-                refresh(table_id);
+            $(".coFilterInput").each(function () {
+                var this_filter = $(this);
+                if (this_filter.val()) {
+                    var this_cell = this_filter.parent();
+                    var columnNum = this_cell.index() + 1;
+                    var search_text = this_filter.val();
+                    this_cell.closest('table')
+                        .find('td:nth-child(' + columnNum + ')')
+                        .each(function () {
+                            var search_cell = $(this);
+                            var curr_row = search_cell.parent();
+                            if ((search_text != "") &&
+                                (!search_cell.hasClass('coFilter')) &&
+                                (search_cell.text().search(search_text) === -1)) {
+                                curr_row.addClass('coTableToHide')
+                                    .removeClass('coTableToShow');
+                            }
+                        });
+                }
                 return this;
             });
-        }
+            $(".coTableToHide").each(function () {
+                var this_row = $(this);
+                this_row.addClass('coTableHidden')
+                    .removeClass('coTableToHide')
+                    .removeClass('coTableToShow');
+                return this;
+            });
+            $(".coTableToShow").each(function () {
+                $(this).removeClass('coTableHidden')
+                    .removeClass('coTableToShow');
+                return this;
+            });
+            setRowCount(getRowCount());
+            refresh(table_id);
+            return this;
+        });
 
         $(".coSortHeader").click(function () {
             //Someone clicked a TH - let's do this thing.
@@ -227,7 +225,6 @@
         ///// start called functions /////
 
         function refresh(table_id) {
-            filterable();
             if (settings.alternateRows) {
                 setAltRows(table_id);
             }
@@ -258,15 +255,13 @@
             //Build an array of all the data in that column
             $("table#" + table_id + " tbody tr td:nth-child(" + col + ")").each(function () {
                 var this_elem = $(this);
-                if (!this_elem.hasClass('coFilter')) {
-                    arr.push({ elem: this_elem, data: getSortData(this_elem.html()) });
-                }
+                arr.push({ elem: this_elem, data: getSortData(this_elem.html()) });
             });
             //Perform a quick sort on the array of type (asc, desc)
             arr = quicksort(arr, type);
-            if (settings.filterable) {
-                var filters = $("table#" + table_id + " tbody tr.coFilters").clone();
-            }
+            //if (settings.filterable) {
+            //    var filters = $("table#" + table_id + " tbody tr.coFilters").clone();
+            //}
             var sorted_table = "";
             for (var i = 0; i < arr.length; i++) {
                 var attr_list = "";
@@ -287,9 +282,9 @@
             }
             //Apply the new sorted table into the tbody wrapper of the old table
             table_body.html(sorted_table);
-            if (settings.filterable) {
-                filters.prependTo(table_body);
-            }
+            //if (settings.filterable) {
+            //    filters.prependTo(table_body);
+            //}
             refresh(table_id);
         }
 
@@ -342,9 +337,6 @@
             var total_count = $("table#" + table_id + " tbody tr").length;
             var hidden_count = $("table#" + table_id + " tbody tr.coTableHidden").length;
             var count = total_count - hidden_count;
-            if (settings.filterable) {
-                count--;
-            }
             return count;
         }
 
