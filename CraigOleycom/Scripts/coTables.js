@@ -259,32 +259,12 @@
             });
             //Perform a quick sort on the array of type (asc, desc)
             arr = quicksort(arr, type);
-            //if (settings.filterable) {
-            //    var filters = $("table#" + table_id + " tbody tr.coFilters").clone();
-            //}
-            var sorted_table = "";
-            for (var i = 0; i < arr.length; i++) {
-                var attr_list = "";
-                //Reset all the attributes of the given TR we are moving around
-                if (typeof arr[i].elem.parent().attr("onclick") !== "undefined")
-                    attr_list = attr_list + " onclick='" + arr[i].elem.parent().attr("onclick") + "'";
-                if (typeof arr[i].elem.parent().attr("id") !== "undefined")
-                    attr_list = attr_list + " id='" + arr[i].elem.parent().attr("id") + "'";
-                if (typeof arr[i].elem.parent().attr("style") !== "undefined")
-                    attr_list = attr_list + " style='" + arr[i].elem.parent().attr("style") + "'";
-                if (typeof arr[i].elem.parent().attr("class") !== "undefined")
-                    attr_list = attr_list + " class='" + arr[i].elem.parent().attr("class") + "'";
 
-                sorted_table = sorted_table +
-                    "<tr" + attr_list + ">" +
-                    $(arr[i].elem.parent()).html() +
-                    "</tr>";
+            var sorted_table;
+            table_body.empty();
+            for (var i = 0; i < arr.length; i++) {
+                table_body.append(arr[i].elem.parent().clone());
             }
-            //Apply the new sorted table into the tbody wrapper of the old table
-            table_body.html(sorted_table);
-            //if (settings.filterable) {
-            //    filters.prependTo(table_body);
-            //}
             refresh(table_id);
         }
 
@@ -383,7 +363,7 @@
                 var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: false, type: 'binary' });
                 saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), export_file_name + ".xlsx");
                 $("#coLoadWrapper").hide();
-                return coTable.coTable(options);
+                return coTable;
             }, 1);
         });
 

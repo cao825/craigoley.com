@@ -24,7 +24,8 @@ namespace CraigOleycom.Controllers
             "https://drscdn.500px.org/photo/98650163/m=900/668d9ebeca8b9c1c98d3ab66e6739870",
             "https://drscdn.500px.org/photo/98660005/m=900/333103f54b0249c137e7246031c55f34",
             "https://drscdn.500px.org/photo/98664405/m=900/60b6d111694d0a67fffd9709733b24d1",
-            "https://drscdn.500px.org/photo/98659999/m=900/ca0172e4012692b61399a39088d2f808"
+            "https://drscdn.500px.org/photo/98659999/m=900/ca0172e4012692b61399a39088d2f808",
+            "https://drscdn.500px.org/photo/104343063/m=2048/0af69abdbb33815edb5eb8c433c8a43a"
         };
 
         [HttpGet]
