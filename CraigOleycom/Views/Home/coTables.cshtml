@@ -1,6 +1,12 @@
 ﻿
 @{
     ViewBag.Title = "coTables";
+    var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    var rand = new Random();
+    var result = new string(
+    Enumerable.Repeat(chars, 8)
+              .Select(s => s[rand.Next(s.Length)])
+              .ToArray());
 }
 
 <h2>coTables</h2>
@@ -14,81 +20,28 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>a</td>
-            <td>4</td>
-            <td>jwoi</td>
-        </tr>
-        <tr>
-            <td>b</td>
-            <td>3</td>
-            <td>ieirw</td>
-        </tr>
-        <tr>
-            <td>c</td>
-            <td>2</td>
-            <td>erpo</td>
-        </tr>
-        <tr>
-            <td>a</td>
-            <td>4</td>
-            <td>jwoi</td>
-        </tr>
-        <tr>
-            <td>b</td>
-            <td>3</td>
-            <td>ieirw</td>
-        </tr>
-        <tr>
-            <td>c</td>
-            <td>2</td>
-            <td>erpo</td>
-        </tr>
-        <tr>
-            <td>a</td>
-            <td>4</td>
-            <td>jwoi</td>
-        </tr>
-        <tr>
-            <td>b</td>
-            <td>3</td>
-            <td>ieirw</td>
-        </tr>
-        <tr>
-            <td>c</td>
-            <td>2</td>
-            <td>erpo</td>
-        </tr>
-        <tr>
-            <td>a</td>
-            <td>4</td>
-            <td>jwoi</td>
-        </tr>
-        <tr>
-            <td>b</td>
-            <td>3</td>
-            <td>ieirw</td>
-        </tr>
-        <tr>
-            <td>c</td>
-            <td>2</td>
-            <td>erpo</td>
-        </tr>
-        <tr>
-            <td>a</td>
-            <td>4</td>
-            <td>jwoi</td>
-        </tr>
-        <tr>
-            <td>b</td>
-            <td>3</td>
-            <td>ieirw</td>
-        </tr>
-        <tr>
-            <td>c</td>
-            <td>2</td>
-            <td>erpo</td>
-        </tr>
+        @for(int i = 0; i < 25; i++) {
+            <tr>
+                <td>@Html.Encode(
+                    new string(
+                        Enumerable.Repeat(chars, 1)
+                        .Select(s => s[rand.Next(s.Length)])
+                        .ToArray())
+                )</td>
+                <td>@Html.Encode(
+                    new string(
+                        Enumerable.Repeat(chars, 2)
+                        .Select(s => s[rand.Next(s.Length)])
+                        .ToArray())
+                )</td>
+                <td>@Html.Encode(
+                    new string(
+                        Enumerable.Repeat(chars, 3)
+                        .Select(s => s[rand.Next(s.Length)])
+                        .ToArray())
+                )</td>
+            </tr>
+        }
     </tbody>
 </table>
 <div id="coLoadWrapper"></div>
