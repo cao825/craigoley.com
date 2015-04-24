@@ -46,7 +46,7 @@
 </table>
 <div id="coLoadWrapper"></div>
 
-<script type="text/javascript" src="~/Scripts/jquery.coTables.min.js"></script>
+<script type="text/javascript" src="~/Scripts/coTables.js"></script>
 <script type="text/javascript" src="~/Scripts/filesaver.min.js"></script>
 <script type="text/javascript" src="~/Scripts/blob.min.js"></script>
 <script type="text/javascript" src="~/Scripts/xlsx.min.js"></script>
@@ -54,7 +54,8 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $("#coTable").coTable({
-            imgPath: "/Content/css/coTableImg/"
+            imgPath: "/Content/css/coTableImg/",
+            filterCaseSensitive: false
         });
     })
 </script>

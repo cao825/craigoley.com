@@ -34,7 +34,7 @@
         var settings = $.extend({
             //allow column filtering
             filterable: true,
-            filter_case_sensitive: true,
+            filterCaseSensitive: true,
             //allow column sorting
             sortable: true,
             //allow export to excel
@@ -51,6 +51,10 @@
             highlightHoverRow: true,
             imgPath: "/css/coTableImg/"
         }, options);
+
+        if (!$("#coLoadWrapper").length) {
+            $("body").append("<div class='coLoadWrapper'></div>");
+        }
 
         if (!coTable.hasClass("coTable")) {
             if ((typeof table_id == "undefined") || (table_id === null) || (table_id === "")) {
@@ -174,9 +178,15 @@
                         .each(function () {
                             var search_cell = $(this);
                             var curr_row = search_cell.parent();
+                            var search_found;
+                            if (settings.filterCaseSensitive) {
+                                search_found = search_cell.text().search(search_text);
+                            } else {
+                                search_found = search_cell.text().toLowerCase().search(search_text.toLowerCase());
+                            }
                             if ((search_text != "") &&
                                 (!search_cell.hasClass('coFilter')) &&
-                                (search_cell.text().search(search_text) === -1)) {
+                                (search_found === -1)) {
                                 curr_row.addClass('coTableToHide')
                                     .removeClass('coTableToShow');
                             }
