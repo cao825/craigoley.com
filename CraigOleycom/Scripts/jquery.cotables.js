@@ -1,5 +1,5 @@
-﻿/*! coTables 0.0.1
- * ©2015 CraigOley.com - MIT License
+/*! coTables 0.0.1
+ * �2015 CraigOley.com - MIT License
  */
 
 /**
@@ -51,10 +51,6 @@
             highlightHoverRow: true,
             imgPath: "/css/coTableImg/"
         }, options);
-
-        if (!$("#coLoadWrapper").length) {
-            $("body").append("<div class='coLoadWrapper'></div>");
-        }
 
         if (!coTable.hasClass("coTable")) {
             if ((typeof table_id == "undefined") || (table_id === null) || (table_id === "")) {
