@@ -128,7 +128,7 @@
                 var info_html = "<tr class='coTableInfo' id='" + table_id + "_coTableInfo'>" +
                     "<th colspan='" + header_count + "' class='coNoExport'>";
                 if (settings.exportable) {
-                    var exportIcon;
+                    var exportIcon = "";
                     if (settings.exportIcon != "") {
                         exportIcon = "<img src='" + settings.exportIcon + "' />";
                     } else {
@@ -136,7 +136,7 @@
                     }
                     info_html = info_html +
                         "<a href='javascript:void(0)' onclick='$(\"table#" + table_id + "\").coTableExport(" + JSON.stringify(options) + ");' class='coHoverImage'>" +
-                        "</a>&ensp;";
+                        exportIcon + "</a>&ensp;";
                 }
                 info_html = info_html + "Row Count: " +
                     "<span id='" + table_id + "_coTableInfo_rowCount'>" + row_count + "</span>" +
